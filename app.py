@@ -1,5 +1,5 @@
 """
-app.py — Credit Risk Predictor (Green Professional UI)
+app.py — Credit Risk Predictor (Green Theme Version)
 """
 
 import streamlit as st
@@ -17,48 +17,53 @@ st.set_page_config(
 )
 
 # ─────────────────────────────────────────────
-# Green Theme UI 💚
+# Green Theme 💚 (เพิ่มเข้ามา)
 # ─────────────────────────────────────────────
 st.markdown("""
 <style>
-body {
-    background: linear-gradient(135deg, #02140f, #052e26);
+
+/* Background */
+.stApp {
+    background: linear-gradient(135deg, #022c22, #064e3b);
+}
+
+/* Text */
+html, body, [class*="css"]  {
+    color: #e6fffa;
 }
 
 /* Title */
 h1 {
-    color: #34d399 !important;
-    font-weight: 700;
+    color: #6ee7b7 !important;
 }
 
-/* Card */
-.block-container {
-    padding-top: 2rem;
+/* Caption */
+.stCaption {
+    color: #a7f3d0 !important;
 }
 
 /* Input */
 .stSelectbox > div, .stSlider > div {
     background-color: rgba(255,255,255,0.05) !important;
+    border: 1px solid rgba(52,211,153,0.3) !important;
     border-radius: 10px !important;
-    border: 1px solid rgba(52,211,153,0.2) !important;
 }
 
 /* Button */
 .stButton > button {
-    background: linear-gradient(135deg, #059669, #34d399) !important;
-    color: white !important;
+    background: linear-gradient(135deg, #10b981, #34d399) !important;
+    color: #022c22 !important;
+    font-weight: bold !important;
     border-radius: 12px !important;
-    font-weight: 600 !important;
     height: 3em;
-    width: 100%;
     border: none;
 }
 
 .stButton > button:hover {
-    background: linear-gradient(135deg, #047857, #10b981) !important;
+    background: linear-gradient(135deg, #059669, #10b981) !important;
 }
 
-/* Result */
+/* Result Boxes */
 .stSuccess {
     background-color: rgba(16,185,129,0.15) !important;
     color: #6ee7b7 !important;
@@ -74,7 +79,9 @@ h1 {
     color: #34d399 !important;
 }
 
+/* Footer */
 footer {visibility: hidden;}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -97,19 +104,14 @@ except Exception as e:
 # ─────────────────────────────────────────────
 # Header
 # ─────────────────────────────────────────────
-st.markdown("""
-<h1>💳 Credit Risk Predictor</h1>
-<p style='color:#9ca3af'>
-ระบบประเมินความเสี่ยงการผิดนัดชำระหนี้<br>
-<span style='color:#34d399'>Machine Learning · Logistic Regression</span>
-</p>
-""", unsafe_allow_html=True)
+st.title("💳 Credit Risk Predictor")
+st.caption("ระบบประเมินความเสี่ยงการผิดนัดชำระหนี้ ด้วย Machine Learning")
 
 if not model_loaded:
     st.warning("⚠️ ไม่พบไฟล์โมเดล กำลังใช้โมเดลจำลองแทน")
 
 # ─────────────────────────────────────────────
-# Input
+# Input Section
 # ─────────────────────────────────────────────
 st.subheader("👤 สถานะผู้ขอสินเชื่อ")
 
@@ -121,7 +123,7 @@ student = st.selectbox(
 student_val = 1 if "นักเรียน" in student and "ไม่ใช่" not in student else 0
 
 # ─────────────────────────────────────────────
-# Financial
+# Financial Input
 # ─────────────────────────────────────────────
 st.subheader("💰 ข้อมูลการเงิน")
 
@@ -130,16 +132,10 @@ income = st.slider("รายได้ต่อเดือน (บาท)", 0, 
 
 # Debt Ratio
 debt_ratio = (balance / income * 100) if income > 0 else 100
-
-if debt_ratio < 30:
-    st.success(f"Debt Ratio: {debt_ratio:.2f}% (ปลอดภัย)")
-elif debt_ratio < 50:
-    st.warning(f"Debt Ratio: {debt_ratio:.2f}% (ควรระวัง)")
-else:
-    st.error(f"Debt Ratio: {debt_ratio:.2f}% (เสี่ยงสูง)")
+st.info(f"Debt-to-Income Ratio: {debt_ratio:.2f}%")
 
 # ─────────────────────────────────────────────
-# Predict
+# Predict Button
 # ─────────────────────────────────────────────
 if st.button("🔍 ประเมินความเสี่ยง", type="primary"):
 
@@ -149,26 +145,27 @@ if st.button("🔍 ประเมินความเสี่ยง", type="p
         pred = model.predict(input_data)[0]
         prob = model.predict_proba(input_data)[0][1]
     else:
-        # fallback model
+        # Mock model
         logit = -8.5 + (-0.6 * student_val) + (0.0055 * balance) + (-0.00008 * income)
         prob = 1 / (1 + np.exp(-logit))
         pred = 1 if prob >= 0.5 else 0
 
-    st.subheader("📊 ผลลัพธ์")
+    # Result
+    st.subheader("📊 ผลการประเมิน")
 
     if pred == 0:
         st.success(f"✅ ความเสี่ยงต่ำ ({(1-prob)*100:.2f}%)")
-        st.write("✔ ลูกค้ามีแนวโน้มชำระหนี้ได้ดี")
+        st.write("✔ สามารถพิจารณาอนุมัติสินเชื่อได้")
     else:
         st.error(f"⚠️ ความเสี่ยงสูง ({prob*100:.2f}%)")
-        st.write("✗ มีโอกาสผิดนัดชำระหนี้")
+        st.write("✗ ควรตรวจสอบเพิ่มเติมก่อนอนุมัติ")
 
     st.write("---")
-    st.write(f"💰 หนี้: {balance} บาท")
-    st.write(f"💵 รายได้: {income} บาท")
-    st.write(f"📊 Debt Ratio: {debt_ratio:.2f}%")
+    st.write(f"ยอดหนี้: {balance} บาท")
+    st.write(f"รายได้: {income} บาท")
+    st.write(f"Debt Ratio: {debt_ratio:.2f}%")
 
 # ─────────────────────────────────────────────
 # Footer
 # ─────────────────────────────────────────────
-st.caption("Model: Logistic Regression | For Educational Use Only")
+st.caption("Model: Logistic Regression | For Education Use Only")
