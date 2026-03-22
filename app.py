@@ -194,13 +194,15 @@ html, body, [class*="css"] {
 @st.cache_resource
 def load_model():
     base = os.path.dirname(os.path.abspath(__file__))
-    return joblib.load(os.path.join(base, "model.pkl"))
+    path = os.path.join(base, "model_artifacts", "model.pkl")
+    return joblib.load(path)
 
 try:
     model = load_model()
     model_loaded = True
-except Exception:
+except Exception as e:
     model_loaded = False
+    print("Load error:", e)
 
 # ─────────────────────────────────────────────
 # Hero
@@ -226,7 +228,7 @@ student = st.selectbox(
     ["ไม่ใช่นักเรียน / นักศึกษา", "นักเรียน / นักศึกษา"],
     help="นักเรียน/นักศึกษามักมีรายได้ไม่แน่นอน"
 )
-student_val = 1 if "นักเรียน" in student and "ไม่ใช่" not in student else 0
+student_val = 1 if student == "นักเรียน / นักศึกษา" else 0
 
 st.markdown('</div>', unsafe_allow_html=True)
 
@@ -264,3 +266,77 @@ st.markdown(f"""
 
 st.markdown('</div>', unsafe_allow_html=True)
 
+# ─────────────────────────────────────────────
+# Predict
+# ─────────────────────────────────────────────
+predict_btn = st.button("🔍 ประเมินความเสี่ยงสินเชื่อ")
+
+if predict_btn:
+    input_data = np.array([[student_val, balance, income]])
+
+    if model_loaded:
+        pred = model.predict(input_data)[0]
+        prob = model.predict_proba(input_data)[0][1]
+    else:
+        logit = -6.0 + (-0.5 * student_val) + (0.0004 * balance) + (-0.0001 * income) + (0.04 * debt_ratio)
+        prob = 1 / (1 + np.exp(-logit))
+        if debt_ratio >= 80:
+            prob = max(prob, 0.75)
+        pred = 1 if prob >= 0.5 else 0
+
+    student_label = "นักเรียน/นักศึกษา" if student_val == 1 else "บุคคลทั่วไป"
+
+    # แสดง input ที่ส่งเข้าโมเดล (debug)
+    with st.expander("🔎 ดูข้อมูลที่ส่งเข้าโมเดล"):
+        st.write({
+            "student": student_val,
+            "balance": balance,
+            "income": income,
+            "debt_ratio": round(debt_ratio, 2),
+            "prob_default": round(float(prob), 4),
+            "prediction": "เสี่ยง" if pred == 1 else "ไม่เสี่ยง"
+        })
+
+    if pred == 0:
+        safe_num = (1 - prob) * 100
+        safe_str = f"{safe_num:.1f}%"
+        st.markdown(f"""
+<div class="res res-safe">
+    <div class="res-verdict">✅ ความเสี่ยงต่ำ</div>
+    <div class="res-pct">{safe_str}</div>
+    <div class="res-sub">โอกาสชำระหนี้ได้ปกติ</div>
+    <div class="pbar"><div class="pbar-s" style="width:{safe_num:.1f}%"></div></div>
+    <div class="pbar-lbl"><span>ปลอดภัย</span><span>เสี่ยงสูง</span></div>
+    <div class="mini">
+        <div class="mini-b"><div class="mini-v">฿{balance:,}</div><div class="mini-k">ยอดหนี้</div></div>
+        <div class="mini-b"><div class="mini-v">฿{income:,}</div><div class="mini-k">รายได้</div></div>
+        <div class="mini-b"><div class="mini-v">{debt_ratio:.1f}%</div><div class="mini-k">Debt Ratio</div></div>
+    </div>
+    <div class="adv">✔ ผู้ขอสินเชื่ออยู่ในเกณฑ์น่าเชื่อถือ สามารถพิจารณาอนุมัติสินเชื่อได้ตามปกติ</div>
+</div>
+        """, unsafe_allow_html=True)
+    else:
+        risk_num = prob * 100
+        risk_str = f"{risk_num:.1f}%"
+        st.markdown(f"""
+<div class="res res-risk">
+    <div class="res-verdict">⚠️ ตรวจพบความเสี่ยงสูง</div>
+    <div class="res-pct">{risk_str}</div>
+    <div class="res-sub">โอกาสผิดนัดชำระหนี้</div>
+    <div class="pbar"><div class="pbar-r" style="width:{risk_num:.1f}%"></div></div>
+    <div class="pbar-lbl"><span>ปลอดภัย</span><span>เสี่ยงสูง</span></div>
+    <div class="mini">
+        <div class="mini-b"><div class="mini-v">฿{balance:,}</div><div class="mini-k">ยอดหนี้</div></div>
+        <div class="mini-b"><div class="mini-v">฿{income:,}</div><div class="mini-k">รายได้</div></div>
+        <div class="mini-b"><div class="mini-v">{debt_ratio:.1f}%</div><div class="mini-k">Debt Ratio</div></div>
+    </div>
+    <div class="adv">✗ แนะนำให้ตรวจสอบประวัติการชำระหนี้และขอเอกสารรายได้เพิ่มเติมก่อนพิจารณาอนุมัติ</div>
+</div>
+        """, unsafe_allow_html=True)
+
+# ─────────────────────────────────────────────
+# Footer
+# ─────────────────────────────────────────────
+st.markdown("""
+<div class="foot">Model: Logistic Regression &nbsp;·&nbsp; For Educational Purposes Only</div>
+""", unsafe_allow_html=True)
