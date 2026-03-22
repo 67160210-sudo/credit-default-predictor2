@@ -276,8 +276,10 @@ if predict_btn:
         pred = model.predict(input_data)[0]
         prob = model.predict_proba(input_data)[0][1]
     else:
-        logit = -8.5 + (-0.6 * student_val) + (0.0055 * balance) + (-0.00008 * income)
+        logit = -6.0 + (-0.5 * student_val) + (0.0004 * balance) + (-0.0001 * income) + (0.04 * debt_ratio)
         prob = 1 / (1 + np.exp(-logit))
+        if debt_ratio >= 80:
+            prob = max(prob, 0.75)
         pred = 1 if prob >= 0.5 else 0
 
     student_label = "นักเรียน/นักศึกษา" if student_val == 1 else "บุคคลทั่วไป"
