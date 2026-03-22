@@ -21,21 +21,27 @@ st.markdown("""
 
 html, body, [class*="css"] {
     font-family: 'Outfit', sans-serif;
+    color: #f9fafb;
 }
 
-/* พื้นหลังเขียว */
+/* พื้นหลังดำ */
 html, body, .stApp {
-    background: linear-gradient(135deg, #a7f3d0, #34d399) !important;
+    background-color: #0f172a !important;
 }
 
-/* ปรับ container */
+/* กัน Streamlit ทับ */
+section[data-testid="stAppViewContainer"] {
+    background-color: #0f172a !important;
+}
+
+/* container */
 .block-container {
     max-width: 600px;
 }
 
 /* ปุ่ม */
 .stButton > button {
-    background: #059669 !important;
+    background: #22c55e !important;
     color: white !important;
     border-radius: 10px !important;
     padding: 12px !important;
