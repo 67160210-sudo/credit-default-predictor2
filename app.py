@@ -1,5 +1,5 @@
 """
-app.py — Credit Risk Predictor (Light Green Theme)
+app.py — Credit Risk Predictor (Clean Green UI)
 """
 
 import streamlit as st
@@ -17,66 +17,69 @@ st.set_page_config(
 )
 
 # ─────────────────────────────────────────────
-# Green Light Theme 💚
+# Clean Green Theme 💚 (อ่านง่าย)
 # ─────────────────────────────────────────────
 st.markdown("""
 <style>
 
-/* 🌿 Background */
+/* Background */
 .stApp {
-    background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+    background-color: #f0fdf4;
 }
 
 /* Text */
 html, body, [class*="css"]  {
-    color: #064e3b;
+    color: #111827;
 }
 
 /* Title */
 h1 {
     color: #059669 !important;
+    font-weight: 700;
 }
 
-/* Caption */
+/* Subtitle */
 .stCaption {
-    color: #065f46 !important;
+    color: #4b5563 !important;
 }
 
 /* Input */
 .stSelectbox > div, .stSlider > div {
-    background-color: white !important;
-    border: 1px solid #a7f3d0 !important;
+    background-color: #ffffff !important;
+    border: 1px solid #d1fae5 !important;
     border-radius: 10px !important;
 }
 
 /* Button */
 .stButton > button {
-    background: linear-gradient(135deg, #34d399, #6ee7b7) !important;
-    color: #064e3b !important;
+    background: #10b981 !important;
+    color: white !important;
     font-weight: bold !important;
-    border-radius: 12px !important;
+    border-radius: 10px !important;
     height: 3em;
     border: none;
 }
 
 .stButton > button:hover {
-    background: linear-gradient(135deg, #10b981, #34d399) !important;
+    background: #059669 !important;
 }
 
-/* Result */
-.stSuccess {
+/* Info */
+.stInfo {
     background-color: #d1fae5 !important;
     color: #065f46 !important;
 }
 
-.stError {
-    background-color: #fee2e2 !important;
-    color: #991b1b !important;
+/* Success */
+.stSuccess {
+    background-color: #bbf7d0 !important;
+    color: #065f46 !important;
 }
 
-.stInfo {
-    background-color: #ecfdf5 !important;
-    color: #047857 !important;
+/* Error */
+.stError {
+    background-color: #fecaca !important;
+    color: #7f1d1d !important;
 }
 
 /* Footer */
@@ -132,7 +135,13 @@ income = st.slider("รายได้ต่อเดือน (บาท)", 0, 
 
 # Debt Ratio
 debt_ratio = (balance / income * 100) if income > 0 else 100
-st.info(f"Debt-to-Income Ratio: {debt_ratio:.2f}%")
+
+if debt_ratio < 30:
+    st.success(f"Debt Ratio: {debt_ratio:.2f}% (ปลอดภัย)")
+elif debt_ratio < 50:
+    st.info(f"Debt Ratio: {debt_ratio:.2f}% (ควรระวัง)")
+else:
+    st.error(f"Debt Ratio: {debt_ratio:.2f}% (เสี่ยงสูง)")
 
 # ─────────────────────────────────────────────
 # Predict Button
