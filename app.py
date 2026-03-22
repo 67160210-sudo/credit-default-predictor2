@@ -181,6 +181,20 @@ html, body, [class*="css"] {
 .res-risk .adv { background:rgba(220,38,38,0.08); color:#991b1b; }
  
 .foot { text-align:center; font-size:11px; color:#d1d5db; margin-top:28px; letter-spacing:.5px; }
+/* เพิ่มพื้นหลังเขียวอ่อนทั้งระบบ */
+html, body, .stApp {
+    background-color: #ecfdf5 !important;
+}
+
+/* ครอบ container ด้านในให้เขียวด้วย */
+section[data-testid="stAppViewContainer"] {
+    background-color: #ecfdf5 !important;
+}
+
+/* เผื่อบาง layer */
+.main {
+    background-color: #ecfdf5 !important;
+}
 </style>
 """, unsafe_allow_html=True)
 
