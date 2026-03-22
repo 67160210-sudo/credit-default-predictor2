@@ -181,19 +181,19 @@ html, body, [class*="css"] {
 .res-risk .adv { background:rgba(220,38,38,0.08); color:#991b1b; }
  
 .foot { text-align:center; font-size:11px; color:#d1d5db; margin-top:28px; letter-spacing:.5px; }
-/* เพิ่มพื้นหลังเขียวอ่อนทั้งระบบ */
+/* เขียวเข้มขึ้นแบบดูพรีเมียม */
 html, body, .stApp {
-    background-color: #ecfdf5 !important;
+    background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 50%, #6ee7b7 100%) !important;
 }
 
-/* ครอบ container ด้านในให้เขียวด้วย */
+/* กัน Streamlit ทับ */
 section[data-testid="stAppViewContainer"] {
-    background-color: #ecfdf5 !important;
+    background: transparent !important;
 }
 
-/* เผื่อบาง layer */
 .main {
-    background-color: #ecfdf5 !important;
+    background: transparent !important;
+}
 }
 </style>
 """, unsafe_allow_html=True)
