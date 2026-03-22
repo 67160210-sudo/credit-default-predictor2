@@ -1,0 +1,8 @@
+{
+  "accuracy": 0.9715,
+  "features": [
+    "student",
+    "balance",
+    "income"
+  ]
+}
