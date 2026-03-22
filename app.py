@@ -1,5 +1,5 @@
 """
-app.py — Credit Risk Predictor (Green Theme Version)
+app.py — Credit Risk Predictor (Light Green Theme)
 """
 
 import streamlit as st
@@ -17,42 +17,42 @@ st.set_page_config(
 )
 
 # ─────────────────────────────────────────────
-# Green Theme 💚 (เพิ่มเข้ามา)
+# Green Light Theme 💚
 # ─────────────────────────────────────────────
 st.markdown("""
 <style>
 
-/* Background */
+/* 🌿 Background */
 .stApp {
-    background: linear-gradient(135deg, #022c22, #064e3b);
+    background: linear-gradient(135deg, #ecfdf5, #d1fae5);
 }
 
 /* Text */
 html, body, [class*="css"]  {
-    color: #e6fffa;
+    color: #064e3b;
 }
 
 /* Title */
 h1 {
-    color: #6ee7b7 !important;
+    color: #059669 !important;
 }
 
 /* Caption */
 .stCaption {
-    color: #a7f3d0 !important;
+    color: #065f46 !important;
 }
 
 /* Input */
 .stSelectbox > div, .stSlider > div {
-    background-color: rgba(255,255,255,0.05) !important;
-    border: 1px solid rgba(52,211,153,0.3) !important;
+    background-color: white !important;
+    border: 1px solid #a7f3d0 !important;
     border-radius: 10px !important;
 }
 
 /* Button */
 .stButton > button {
-    background: linear-gradient(135deg, #10b981, #34d399) !important;
-    color: #022c22 !important;
+    background: linear-gradient(135deg, #34d399, #6ee7b7) !important;
+    color: #064e3b !important;
     font-weight: bold !important;
     border-radius: 12px !important;
     height: 3em;
@@ -60,23 +60,23 @@ h1 {
 }
 
 .stButton > button:hover {
-    background: linear-gradient(135deg, #059669, #10b981) !important;
+    background: linear-gradient(135deg, #10b981, #34d399) !important;
 }
 
-/* Result Boxes */
+/* Result */
 .stSuccess {
-    background-color: rgba(16,185,129,0.15) !important;
-    color: #6ee7b7 !important;
+    background-color: #d1fae5 !important;
+    color: #065f46 !important;
 }
 
 .stError {
-    background-color: rgba(220,38,38,0.15) !important;
-    color: #fca5a5 !important;
+    background-color: #fee2e2 !important;
+    color: #991b1b !important;
 }
 
 .stInfo {
-    background-color: rgba(16,185,129,0.1) !important;
-    color: #34d399 !important;
+    background-color: #ecfdf5 !important;
+    color: #047857 !important;
 }
 
 /* Footer */
@@ -137,7 +137,7 @@ st.info(f"Debt-to-Income Ratio: {debt_ratio:.2f}%")
 # ─────────────────────────────────────────────
 # Predict Button
 # ─────────────────────────────────────────────
-if st.button("🔍 ประเมินความเสี่ยง", type="primary"):
+if st.button("🔍 ประเมินความเสี่ยง", type="primary", use_container_width=True):
 
     input_data = np.array([[student_val, balance, income]])
 
@@ -155,17 +155,17 @@ if st.button("🔍 ประเมินความเสี่ยง", type="p
 
     if pred == 0:
         st.success(f"✅ ความเสี่ยงต่ำ ({(1-prob)*100:.2f}%)")
-        st.write("✔ สามารถพิจารณาอนุมัติสินเชื่อได้")
+        st.write("✔ ลูกค้ามีแนวโน้มชำระหนี้ได้ดี")
     else:
         st.error(f"⚠️ ความเสี่ยงสูง ({prob*100:.2f}%)")
-        st.write("✗ ควรตรวจสอบเพิ่มเติมก่อนอนุมัติ")
+        st.write("✗ มีโอกาสผิดนัดชำระหนี้")
 
     st.write("---")
-    st.write(f"ยอดหนี้: {balance} บาท")
-    st.write(f"รายได้: {income} บาท")
-    st.write(f"Debt Ratio: {debt_ratio:.2f}%")
+    st.write(f"💰 ยอดหนี้: {balance} บาท")
+    st.write(f"💵 รายได้: {income} บาท")
+    st.write(f"📊 Debt Ratio: {debt_ratio:.2f}%")
 
 # ─────────────────────────────────────────────
 # Footer
 # ─────────────────────────────────────────────
-st.caption("Model: Logistic Regression | For Education Use Only")
+st.caption("Model: Logistic Regression | For Educational Use Only")
